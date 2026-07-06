@@ -1,11 +1,11 @@
-name: CI
+name: CI/CD
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,3 +23,15 @@ jobs:
         with:
           push: true
           tags: zvmarko/taskmanager:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull zvmarko/taskmanager:latest
+            docker stop taskmanager || true
+            docker rm taskmanager || true
+            docker run -d -p 8000:8000 --name taskmanager zvmarko/taskmanager:latest
