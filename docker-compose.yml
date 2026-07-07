@@ -6,4 +6,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - ENV=production 
+      - DATABASE_URL=postgresql://postgres:password@db:5432/taskmanager
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=taskmanager
+    ports:
+      - "5432:5432"

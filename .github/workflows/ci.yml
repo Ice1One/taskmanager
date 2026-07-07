@@ -34,4 +34,7 @@ jobs:
             docker pull zvmarko/taskmanager:latest
             docker stop taskmanager || true
             docker rm taskmanager || true
-            docker run -d -p 8000:8000 --name taskmanager zvmarko/taskmanager:latest
+            docker run -d -p 8000:8000 \
+              --name taskmanager \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              zvmarko/taskmanager:latest
