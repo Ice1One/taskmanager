@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
@@ -41,6 +42,8 @@ def get_db():
     finally:
         db.close()
 
+
+Instrumentator().instrument(app).expose(app)
 # CoinGecko API
 async def fetch_prices(coin_ids: list[str]) -> dict:
     ids = ",".join(coin_ids)
