@@ -7,9 +7,20 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime
 import httpx
 import os
+import json
+import boto3
 
 # Database
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost/crypto")
+def get_database_url():
+    secret_arn = os.getenv("DATABASE_URL")
+    if secret_arn and secret_arn.startswith("arn:aws"):
+        client = boto3.client("secretsmanager", region_name="eu-central-1")
+        response = client.get_secret_value(SecretId=secret_arn)
+        secret = json.loads(response["SecretString"])
+        return f"postgresql://{secret['username']}:{secret['password']}@{secret['host']}:{secret.get('port', 5432)}/{secret['dbname']}"
+    return secret_arn or "postgresql://postgres:password@localhost/crypto"
+
+DATABASE_URL = get_database_url()
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -42,8 +53,8 @@ def get_db():
     finally:
         db.close()
 
-
 Instrumentator().instrument(app).expose(app)
+
 # CoinGecko API
 async def fetch_prices(coin_ids: list[str]) -> dict:
     ids = ",".join(coin_ids)
