@@ -125,6 +125,8 @@ VPC (devops-vpc) 10.0.0.0/16
 | **VPC** | Isolated network |
 | **IAM** | Access management |
 | **Elastic IP** | Static public IP |
+| **Secrets Manager** | Secure storage for database credentials |
+| **VPC Endpoints** | Private connectivity to AWS services |
 
 ```bash
 cd terraform
@@ -154,6 +156,17 @@ Zero-downtime deployment
 |------|---------|------|
 | Prometheus | Metrics collection | 9090 |
 | Grafana | Visualization | 3000 |
+
+## 🔒 Security
+
+- **AWS Secrets Manager** — database credentials stored securely, never in code
+- **VPC Endpoints** — private connectivity to AWS services without internet:
+  - `secretsmanager` — secure secret retrieval
+  - `ecr.api` / `ecr.dkr` — private ECR image pulling
+  - `cloudwatch logs` — private log streaming
+- **IAM Roles** — least privilege access for ECS tasks
+- **Private Subnets** — RDS database not exposed to internet
+
 
 **Dashboards:**
 - 📈 Total HTTP Requests
