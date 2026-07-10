@@ -24,7 +24,7 @@ Crypto Price Tracker is a production-ready REST API that tracks real-time prices
 ## 🏗️ Architecture
 
 Internet
-    ↓
+↓
 AWS WAF (DDoS, SQL injection protection)
 ↓
 AWS Application Load Balancer
@@ -225,22 +225,22 @@ docker compose -f monitoring-compose.yml up -d
 ## 📸 Screenshots
 
 ### Grafana Monitoring Dashboard
-![Grafana](grafana.png)
+![Grafana](screenshots/grafana.png)
 
 ### AWS WAF Protection
-![WAF](waf.png)
+![WAF](screenshots/waf.png)
 
 ### ECS Cluster
-![ECS Cluster](ecs-cluster.png)
+![ECS Cluster](screenshots/ecs-cluster.png)
 
 ### ECS Auto Scaling
-![Auto Scaling](ecs-autoscaling.png)
+![Auto Scaling](screenshots/ecs-autoscaling.png)
 
 ### CloudWatch Alarm
-![CloudWatch](cloudwatch-alarm.png)
+![CloudWatch](screenshots/cloudwatch-alarm.png)
 
 ### ECR Images
-![ECR](ecr-images.png)
+![ECR](screenshots/ecr-images.png)
 
 ---
 
@@ -277,5 +277,4 @@ docker compose -f monitoring-compose.yml up -d
 GitHub: [@Ice1One](https://github.com/Ice1One)
 
 ---
-
 
