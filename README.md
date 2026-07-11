@@ -17,7 +17,7 @@
 
 ## 🎬 Live Demo
 
-![Demo](demo.gif)
+![Demo](demo-.gif)
 
 ---
 
