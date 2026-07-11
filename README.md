@@ -21,6 +21,28 @@ Crypto Price Tracker is a production-ready REST API that tracks real-time prices
 
 ---
 
+## 📸 Screenshots
+
+### Grafana Monitoring Dashboard
+![Grafana](screenshots/grafana.png)
+
+### AWS WAF Protection
+![WAF](screenshots/waf.png)
+
+### ECS Cluster
+![ECS Cluster](screenshots/ecs-cluster.png)
+
+### ECS Auto Scaling
+![Auto Scaling](screenshots/ecs-autoscaling.png)
+
+### CloudWatch Alarm
+![CloudWatch](screenshots/cloudwatch-alarm.png)
+
+### ECR Images
+![ECR](screenshots/ecr-images.png)
+
+---
+
 ## 🏗️ Architecture
 
 Internet
@@ -130,7 +152,7 @@ VPC (devops-vpc) 10.0.0.0/16
 |---------|---------|
 | **ECR** | Private Docker image registry |
 | **ECS Fargate** | Serverless container orchestration |
-| **ALB** | Application Load Balancer |
+| **ALB** | Application Load Balancer (L7) |
 | **RDS PostgreSQL** | Managed database |
 | **VPC** | Isolated network |
 | **IAM** | Access management |
@@ -151,15 +173,25 @@ terraform apply
 
 ## 🔄 CI/CD Pipeline
 
-git push → GitHub Actions
+git push
 ↓
-Run pytest tests
+GitHub Actions
 ↓
-Build Docker image
+pytest tests (fail = stop)
 ↓
-Push to AWS ECR
+docker build
 ↓
-Deploy to ECS Fargate
+ECR login + docker push
+↓
+ECS pulls image from ECR
+↓
+ECS pulls DATABASE_URL from Secrets Manager
+↓
+ECS Fargate starts new container
+↓
+ALB health check → /health
+↓
+Traffic routed to new container
 ↓
 Zero-downtime deployment
 
@@ -171,7 +203,7 @@ Zero-downtime deployment
   - Core rule set
   - Known bad inputs
   - SQL database protection
-- **AWS Secrets Manager** — database credentials stored securely
+- **AWS Secrets Manager** — database credentials stored securely, never in code
 - **VPC Endpoints** — private connectivity without internet:
   - `secretsmanager` — secure secret retrieval
   - `ecr.api` / `ecr.dkr` — private ECR image pulling
@@ -191,6 +223,8 @@ CPU drops  → scales back down
 
 - **Minimum tasks:** 1
 - **Maximum tasks:** 5
+- **Metric:** ECSServiceAverageCPUUtilization
+- **Target:** 70%
 - **Scale-out cooldown:** 60 seconds
 - **Scale-in cooldown:** 120 seconds
 
@@ -219,28 +253,6 @@ docker compose -f monitoring-compose.yml up -d
 
 - Grafana: `http://EC2_IP:3000` (admin / admin123)
 - Prometheus: `http://EC2_IP:9090`
-
----
-
-## 📸 Screenshots
-
-### Grafana Monitoring Dashboard
-![Grafana](screenshots/grafana.png)
-
-### AWS WAF Protection
-![WAF](screenshots/waf.png)
-
-### ECS Cluster
-![ECS Cluster](screenshots/ecs-cluster.png)
-
-### ECS Auto Scaling
-![Auto Scaling](screenshots/ecs-autoscaling.png)
-
-### CloudWatch Alarm
-![CloudWatch](screenshots/cloudwatch-alarm.png)
-
-### ECR Images
-![ECR](screenshots/ecr-images.png)
 
 ---
 
